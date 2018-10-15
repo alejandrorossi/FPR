@@ -1,6 +1,6 @@
 package model;
 
-public class ConcrVector {
+public class ConcurVector {
     // El array con los elementos del vector
     private double[] elements;
     private int threads;
@@ -8,7 +8,7 @@ public class ConcrVector {
     /** Constructor del SeqVector.
      * @param size, la longitud del vector.
      * @precondition size > 0. */
-    public ConcrVector(int size, int threads) {
+    public ConcurVector(int size, int threads) {
         elements = new double[size];
         this.threads = threads; 
     }
