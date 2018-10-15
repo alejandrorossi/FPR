@@ -5,9 +5,8 @@ import java.util.LinkedList;
 public class Buffer {
     // buffer size
     private int size;
-
     // buffer implementation
-    private LinkedList<Double> list = new LinkedList<>();
+    private LinkedList<Double> list ;
 
     /**
      *
@@ -15,14 +14,15 @@ public class Buffer {
      */
     public Buffer(int size) {
         this.size = size;
+        this.list = new LinkedList<>();
     }
 
     /**
-     * adds d to the buffer
+     * adds d to the buffer, blocks when capacity is full
      * @param d
      */
     public synchronized void add(Double d) {
-        while (list.size() + 1 > this.size) {
+        while (list.size() >= this.size) {
             try {
                 wait();
             } catch (InterruptedException e) {
@@ -35,7 +35,7 @@ public class Buffer {
     }
 
     /**
-     * returns and removes the first element in the buffer
+     * returns and removes the first element in the buffer, blocks when is empty
      * @return
      */
     public synchronized Double poll() {

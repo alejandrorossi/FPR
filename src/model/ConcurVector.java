@@ -5,14 +5,14 @@ public class ConcurVector {
     private double[] elements;
     private int threads;
 
-    /** Constructor del SeqVector.
+    /** Constructor del ConcurVector.
      * @param size, la longitud del vector.
-     * @precondition size > 0. */
+     * @param threads, cantidad ḿaxima a utilizar.
+     * @precondition size && threads  > 0. */
     public ConcurVector(int size, int threads) {
         elements = new double[size];
         this.threads = threads;
     }
-
 
     /** Retorna la longitud del vector; es decir, su dimension. */
     public int dimension() {

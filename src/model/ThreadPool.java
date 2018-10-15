@@ -10,8 +10,8 @@ public class ThreadPool {
 
     /**
      *
-     * @param threads the ammount of threads (workers) to initialize per task
-     * @param elements the ammount of elements each worker takes from input buffer
+     * @param threads the amount of threads (workers) to initialize per task
+     * @param elements the amount of elements each worker takes from input buffer
      */
     public ThreadPool(int threads, int elements) {
         this.threads = threads;
@@ -21,6 +21,8 @@ public class ThreadPool {
             setUneven();
     }
 
+    //TODO: ver si el ultimo worker debería tomar uno mas o dejarlo pasar y dejarlo para la segunda ronda de proceso
+
     /**
      * specifies the pool that elements are un even and last worker should take
      * one more element than the rest
@@ -29,8 +31,13 @@ public class ThreadPool {
         uneven = true;
     }
 
+
+
+
+
+
     /**
-     * sums all elememnts in input buffer
+     * sums all elements in input buffer
      *
      * elements size is equal to this.threads
      *
@@ -59,4 +66,8 @@ public class ThreadPool {
 
         return output;
     }
+
+
+
+
 }
