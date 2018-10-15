@@ -31,6 +31,15 @@ public class Worker implements Runnable {
     }
 
     /**
+     * tells the worker to take one more element from the buffer
+     * IMPORTANT: this method should be called before starting the thread
+     * PRECONDITION: asumes action can be done and this method will be called only once
+     */
+    public void plusOne() {
+        elements++;
+    }
+
+    /**
      * takes elements from input buffers, sums them and adds result into output buffer
      */
     public void sum() {
