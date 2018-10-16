@@ -5,6 +5,8 @@ public class ConcurVector {
     private double[] elements;
     private int threads;
 
+    private ThreadPool tpool;
+
     /** Constructor del ConcurVector.
      * @param size, la longitud del vector.
      * @param threads, cantidad ḿaxima a utilizar.
@@ -56,37 +58,26 @@ public class ConcurVector {
     public double sum() {
         // cuantos resultados voy a tener, inicialmente
         // la misma cantidad que de threads trabajando
-        int results = threads;
-
-        // la cantidad de elementos que tendra el buffer de input,
-        // inicialmente tanta como elememtnos en el vector
-        int inputSize = elements.length;
-
-        // la cantidad de elementos que cada worker debera sacar del buffer
-        int elemsPerWorker = inputSize / threads;
+        int results = this.threads;
 
         // buffer de resultados, inicialmente creado con tanta cantidad como elementos
         // tiene el vector
-        Buffer buffer = new Buffer(inputSize);
+        Buffer b = new Buffer(this.elements.length);
 
         // cargo el buffer
-        load(buffer);
+        this.load(b);
 
-        // mientras que tenga mas que 1 resultado
-        while (results < 1) {
+        while (results > 1) {
             // creo el pool
-            ThreadPool pool = new ThreadPool(results, elemsPerWorker);
+            ThreadPool pool = new ThreadPool(this.threads ,VectorTask.SUM);
 
             // arranco la suma y actualizo el buffer al que tendra los resultados
             // en la proxima iteracion
-            buffer = pool.sum(buffer);
+            b = pool.sum(b);
 
-            // actualizo las variables
-            inputSize = results;
-            
+            results = b.size();
         }
 
-        // ahora que tengo solo 1 resultado, lo devuelvo
-        return buffer.poll();
+        return b.poll();
     }
 }

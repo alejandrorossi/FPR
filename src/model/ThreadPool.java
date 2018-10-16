@@ -2,69 +2,63 @@ package model;
 
 public class ThreadPool {
 
-    private int threads;
-    private int elements;
+    private Buffer buffer;
 
-    // tells if last worker to be instanciated should take one more element
-    private boolean uneven = false;
+    private int size;
+    private int threads;
+
+    private int elements; //The amount of elements each worker takes from input buffer
+    private int over = 0; //The amount of elements that some worker must take more
+    private VectorTask typeTask;
 
     /**
      *
      * @param threads the amount of threads (workers) to initialize per task
-     * @param elements the amount of elements each worker takes from input buffer
+     * @param task type task
      */
-    public ThreadPool(int threads, int elements) {
+    public ThreadPool(int threads, VectorTask task) {
         this.threads = threads;
-        this.elements = elements;
-
-        if (threads % elements != 0)
-            setUneven();
+        this.typeTask = task;
     }
 
-    //TODO: ver si el ultimo worker debería tomar uno mas o dejarlo pasar y dejarlo para la segunda ronda de proceso
+    private void calculateElemsForWorkers(){
+        if(this.size < this.threads){ this.threads = this.size /2; }
 
-    /**
-     * specifies the pool that elements are un even and last worker should take
-     * one more element than the rest
-     */
-    private void setUneven() {
-        uneven = true;
+        this.elements = this.size / this.threads;
+        this.over = this.size % this.threads;
     }
 
+    private void initWorkers(){
+        this.size = this.buffer.size();
 
+        this.calculateElemsForWorkers();
 
+        for(int i = 0; i < this.threads; ++i){
+            Task t;
+            if(i == 0){
+                t = new Task(this.typeTask.ordinal(), this.elements + this.over);
+            }else{
+                t = new Task(this.typeTask.ordinal(), this.elements);
+            }
 
+            Worker w = new Worker(t, this.buffer);
 
-
-    /**
-     * sums all elements in input buffer
-     *
-     * elements size is equal to this.threads
-     *
-     * @param input element service to sum
-     * @return a buffer with partial results as elements
-     */
-    public Buffer sum(Buffer input) {
-        // create output buffer
-        Buffer output = new Buffer(threads);
-
-        // repeat threads times
-        for (int i = 0; i < threads; i++) {
-            // create a worker
-            Worker worker = new Worker(elements, input, output);
-
-            // if uneven and last element, tells worker to take one more element
-            if (i == threads && uneven)
-                worker.plusOne();
-
-            // create a thread
-            Thread thread = new Thread(worker);
-
-            // run worker thread
-            thread.start();
+            Thread wt = new Thread(w);
+            wt.start();
         }
+    }
 
-        return output;
+    /**
+     * sums all elements in the buffer
+     * @return a buffer with partial results
+     */
+    public Buffer sum(Buffer b) {
+
+        this.buffer = b;
+
+        this.initWorkers();
+
+        return this.buffer;
     }
 
 

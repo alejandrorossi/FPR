@@ -5,21 +5,18 @@ package model;
  */
 public class Worker implements Runnable {
 
-    private int elements;
-
-    private Buffer input;
-    private Buffer output;
+    long threadId = Thread.currentThread().getId();
+    private Buffer buffer;
+    private Task task;
 
     /**
      *
-     * @param elements the amount of elements to take from the buffer
-     * @param input element service
-     * @param output buffer to output the result only once
+     * @param task the amount of elements to take from the buffer and the type task
+     * @param buffer element service
      */
-    public Worker(int elements, Buffer input, Buffer output) {
-        this.elements = elements;
-        this.input = input;
-        this.output = output;
+    public Worker(Task task, Buffer buffer) {
+        this.buffer = buffer;
+        this.task = task;
     }
 
     /**
@@ -27,7 +24,17 @@ public class Worker implements Runnable {
      */
     @Override
     public void run() {
-        sum();
+        VectorTask[] tasks = VectorTask.values();
+        switch (tasks[this.task.type]) {
+            case SET:
+                for(int i = 0; i < this.task.cantValues ; ++i){
+                    System.out.println("Thread: "+ threadId +" ejecuto un Set!");
+                }
+                break;
+            case SUM:
+                this.sum();
+                break;
+        }
     }
 
     /**TODO: el worker debe finalizar ejecucion al encontrar elemento invalido
@@ -40,8 +47,8 @@ public class Worker implements Runnable {
 
 
     private void sacarYagregar(double d){
-        input.poll();
-        output.add(d);
+//        input.poll();
+//        output.add(d);
     }
 
 
@@ -52,34 +59,24 @@ public class Worker implements Runnable {
      * PRECONDITION: assumes action can be done and this method will be called only once
      */
     public void plusOne() {
-        elements++;
+//        elements++;
     }
 
     /**
      * takes elements from input buffers, sums them and adds result into output buffer
      */
     public void sum() {
-        Double result = 0.0;
-        Double element;
+        double result = 0.0;
 
-        for (int i = 0; i < elements; i++) {
-            element = input.poll();
-            result += element;
-
-            // concurrency test based on execution time
-            System.out.println("++++++++Thread ID " + Thread.currentThread().getId() + " executed sum():");
-            System.out.println("prev result: " + (result - element));
-            System.out.println("element: " + element);
-            System.out.println("result: " + result);
-            System.out.println("++++++++");
+        while(! this.task.isFullValues()){
+            this.task.setValue(this.buffer.poll());
         }
 
-        output.add(result);
+        for (double val : this.task.values) {
+            result += val;
+        }
 
-        // concurrency test based on execution time
-        System.out.println("++++++++Thread ID " + Thread.currentThread().getId() + " added to output buffer.");
-        System.out.println("result: " + result);
-        System.out.println("++++++++");
+        this.buffer.add(result);
     }
 
 
@@ -87,9 +84,9 @@ public class Worker implements Runnable {
      * @param d, value to be assigned. */
     public void set(double d) {
         elemIsValid( d);
-        for (int i = 0; i < elements; ++i){
-            sacarYagregar(d);
-        }
+//        for (int i = 0; i < elements; ++i){
+//            sacarYagregar(d);
+//        }
     }
 
     /** Copies the values of another vector to this one
@@ -109,7 +106,7 @@ public class Worker implements Runnable {
      * @precondition dimension() == mask.dimension() && dimension() == v.dimension(). */
     public void assign(SeqVector mask, SeqVector v) {
         for (int i = v.dimension(); i > 0; --i) //para secVector
-        // for (int i = elements; i > 0; --i){ //para concurVector
+//         for (int i = elements; i > 0; --i){ //para concurVector
             if (mask.get(i) >= 0)  //si es igual o mayor a 0  copia
                 sacarYagregar(v.get(i));
     }

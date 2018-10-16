@@ -50,4 +50,6 @@ public class Buffer {
         notifyAll();
         return list.poll();
     }
+
+    public int size(){ return this.list.size(); }
 }
