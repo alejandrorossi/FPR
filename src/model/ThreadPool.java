@@ -2,8 +2,8 @@ package model;
 
 public class ThreadPool {
 
-    private Buffer buffer;
-
+    private Buffer input;
+    private Buffer output;
     private int size;
     private int threads;
 
@@ -19,17 +19,18 @@ public class ThreadPool {
     public ThreadPool(int threads, VectorTask task) {
         this.threads = threads;
         this.typeTask = task;
+        this.output = new Buffer(this.threads);
     }
 
     private void calculateElemsForWorkers(){
-        if(this.size < this.threads){ this.threads = this.size /2; }
+        //f(this.size < this.threads){ this.threads = this.size /2; }
 
         this.elements = this.size / this.threads;
         this.over = this.size % this.threads;
     }
 
     private void initWorkers(){
-        this.size = this.buffer.size();
+        this.size = this.input.size();
 
         this.calculateElemsForWorkers();
 
@@ -41,7 +42,7 @@ public class ThreadPool {
                 t = new Task(this.typeTask.ordinal(), this.elements);
             }
 
-            Worker w = new Worker(t, this.buffer);
+            Worker w = new Worker(t, this.input, this.output);
 
             Thread wt = new Thread(w);
             wt.start();
@@ -54,11 +55,11 @@ public class ThreadPool {
      */
     public Buffer sum(Buffer b) {
 
-        this.buffer = b;
+        this.input = b;
 
         this.initWorkers();
 
-        return this.buffer;
+        return this.output;
     }
 
 

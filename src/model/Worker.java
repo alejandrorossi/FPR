@@ -6,16 +6,18 @@ package model;
 public class Worker implements Runnable {
 
     long threadId = Thread.currentThread().getId();
-    private Buffer buffer;
+    private Buffer input;
+    private Buffer output;
     private Task task;
 
     /**
      *
      * @param task the amount of elements to take from the buffer and the type task
-     * @param buffer element service
+     * @param input element service
      */
-    public Worker(Task task, Buffer buffer) {
-        this.buffer = buffer;
+    public Worker(Task task, Buffer input, Buffer output) {
+        this.input = input;
+        this.output = output;
         this.task = task;
     }
 
@@ -69,14 +71,14 @@ public class Worker implements Runnable {
         double result = 0.0;
 
         while(! this.task.isFullValues()){
-            this.task.setValue(this.buffer.poll());
+            this.task.setValue(this.input.poll());
         }
 
         for (double val : this.task.values) {
             result += val;
         }
 
-        this.buffer.add(result);
+        this.output.add(result);
     }
 
 

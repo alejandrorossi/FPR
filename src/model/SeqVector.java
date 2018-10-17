@@ -83,6 +83,7 @@ public class SeqVector {
     }
 
 
+
     /** Multiplica los valores de este vector con los de otro
      *  (uno a uno).
      * @param v, el vector con los valores a multiplicar.

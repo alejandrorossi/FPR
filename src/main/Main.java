@@ -6,7 +6,7 @@ import model.SeqVector;
 public class Main {
 
     public static void main(String[] args) {
-        ConcurVector cv = new ConcurVector(10, 3);
+        ConcurVector cv = new ConcurVector(10, 4);
 
         cv.set(0, 1);
         cv.set(1, 1);

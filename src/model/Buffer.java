@@ -52,4 +52,11 @@ public class Buffer {
     }
 
     public int size(){ return this.list.size(); }
+
+    public void printAll() {
+        System.out.println("asd");
+        for (Double x:list)
+            System.out.println(x);
+
+    }
 }
