@@ -67,19 +67,22 @@ public class ConcurVector {
         // cargo el buffer
         this.load(b);
 
-        while (results > 1) {
+        while (results >= 1) {
+            System.out.println("Results: " + results);
             // creo el pool
             ThreadPool pool = new ThreadPool(results ,VectorTask.SUM);
 
             // arranco la suma y actualizo el buffer al que tendra los resultados
             // en la proxima iteracion
             b = pool.sum(b);
+            System.out.println(b);
+
+            b.waitTillFull();
 
             results = results / 2;
-
-            while (b.size() < results);
         }
 
+        System.out.println(b);
         return b.poll();
     }
 }

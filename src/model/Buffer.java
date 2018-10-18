@@ -30,8 +30,19 @@ public class Buffer {
             }
         }
 
+        System.out.println(this + " - In: " + d);
         list.add(d);
         notifyAll();
+    }
+
+    public synchronized void waitTillFull() {
+        while (list.size() < this.size) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -47,8 +58,10 @@ public class Buffer {
             }
         }
 
+        Double ret = list.poll();
+        System.out.println(this + " - Out: " + ret);
         notifyAll();
-        return list.poll();
+        return ret;
     }
 
     public int size(){ return this.list.size(); }

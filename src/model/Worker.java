@@ -70,12 +70,19 @@ public class Worker implements Runnable {
     public void sum() {
         double result = 0.0;
 
-        while(! this.task.isFullValues()){
-            this.task.setValue(this.input.poll());
-        }
+//        while(! this.task.isFullValues()){
+//            this.task.setValue(this.input.poll());
+//        }
+//
+//        for (double val : this.task.values) {
+//            result += val;
+//        }
 
-        for (double val : this.task.values) {
-            result += val;
+        for (int i = 0;i < task.cantValues; i++) {
+            double x = this.input.poll();
+            result += x;
+            System.out.println(x);
+            System.out.println(result);
         }
 
         this.output.add(result);
