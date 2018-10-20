@@ -5,6 +5,11 @@ package model;
  */
 public class Worker implements Runnable {
 
+    private ConcurVector vector;
+    private double d;
+    private int threadIndex;
+    private int elemsPerWorker;
+    private double setVal;
     long threadId = Thread.currentThread().getId();
     private Buffer input;
     private Buffer output;
@@ -21,17 +26,23 @@ public class Worker implements Runnable {
         this.task = task;
     }
 
+    public Worker(int elemsPerWorker, int threadIndex, double d, ConcurVector vector, Task task) {
+        this.elemsPerWorker = elemsPerWorker;
+        this.threadIndex = threadIndex;
+        this.d = d;
+        this.vector = vector;
+        this.task = task;
+    }
+
+
     /**
      * for now, just sums elements
      */
     @Override
     public void run() {
-        VectorTask[] tasks = VectorTask.values();
-        switch (tasks[this.task.type]) {
+        switch (task.type) {
             case SET:
-                for(int i = 0; i < this.task.cantValues ; ++i){
-                    System.out.println("Thread: "+ threadId +" ejecuto un Set!");
-                }
+                this.set(d, vector, threadIndex, elemsPerWorker);
                 break;
             case SUM:
                 this.sum();
@@ -72,10 +83,7 @@ public class Worker implements Runnable {
 
         for (int i = 0;i < task.cantValues; i++) {
             double x = this.input.poll();
-            System.out.println("Result inicial: " + result);
             result += x;
-            System.out.println("Sumando a: " + x);
-            System.out.println("Con resultado: " + result);
         }
 
         this.output.add(result);
@@ -84,11 +92,10 @@ public class Worker implements Runnable {
 
     /** Puts d value in all vector's positions.
      * @param d, value to be assigned. */
-    public void set(double d) {
-        elemIsValid( d);
-//        for (int i = 0; i < elements; ++i){
-//            sacarYagregar(d);
-//        }
+    public void set(double d, ConcurVector output, int index, int cant) {
+        for (int i = 0; i < cant; i++) {
+            output.set(index + i, d);
+        }
     }
 
     /** Copies the values of another vector to this one

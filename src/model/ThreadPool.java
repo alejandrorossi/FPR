@@ -1,5 +1,7 @@
 package model;
 
+import java.util.Vector;
+
 public class ThreadPool {
 
     private Buffer input;
@@ -37,9 +39,9 @@ public class ThreadPool {
         for(int i = 0; i < this.threads; ++i){
             Task t;
             if(i == 0){
-                t = new Task(this.typeTask.ordinal(), this.elements + this.over);
+                t = new Task(VectorTask.SUM, this.elements + this.over);
             }else{
-                t = new Task(this.typeTask.ordinal(), this.elements);
+                t = new Task(VectorTask.SUM, this.elements);
             }
 
             Worker w = new Worker(t, this.input, this.output);
@@ -63,6 +65,19 @@ public class ThreadPool {
     }
 
 
-
-
+    /**
+     * sets d in all elements of vector
+     * @param d
+     * @param vector
+     */
+    public void set(double d, ConcurVector vector) {
+        int elemsPerWorker = vector.dimension() / threads;
+        int threadIndex = 0;
+        for (int i = 0; i < threads; i++) {
+            Worker worker = new Worker(elemsPerWorker, threadIndex, d, vector, new Task(VectorTask.SET));
+            Thread thread = new Thread(worker);
+            thread.start();
+            threadIndex += elemsPerWorker;
+        }
+    }
 }

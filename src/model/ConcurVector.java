@@ -58,6 +58,7 @@ public class ConcurVector {
      * @param d, el valor a ser asignado. */
     public void set(double d) {
         ThreadPool pool = new ThreadPool(threads, VectorTask.SET);
+        pool.set(d, this);
     }
 
     /** Obtiene la suma de todos los valores del vector. */
