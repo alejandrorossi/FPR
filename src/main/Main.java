@@ -22,6 +22,8 @@ public class Main {
 
         cv.set(99);
 
+        cv.add(cv);
+
         Thread.sleep(500);
 
         for (int i = 0; i < cv.dimension(); i++)

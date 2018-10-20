@@ -5,6 +5,7 @@ package model;
  */
 public class Worker implements Runnable {
 
+    private ConcurVector vector2;
     private ConcurVector vector;
     private double d;
     private int threadIndex;
@@ -34,6 +35,14 @@ public class Worker implements Runnable {
         this.task = task;
     }
 
+    public Worker(int elemsPerWorker, int threadIndex, ConcurVector v1, ConcurVector v2, Task task) {
+        this.elemsPerWorker = elemsPerWorker;
+        this.threadIndex = threadIndex;
+        this.vector = v1;
+        this.vector2 = v2;
+        this.task = task;
+    }
+
 
     /**
      * for now, just sums elements
@@ -46,6 +55,9 @@ public class Worker implements Runnable {
                 break;
             case SUM:
                 this.sum();
+                break;
+            case ADD:
+                this.add();
                 break;
         }
     }
@@ -97,6 +109,14 @@ public class Worker implements Runnable {
             output.set(index + i, d);
         }
     }
+
+
+    private void add() {
+        for (int i = 0; i < elemsPerWorker; i++) {
+            vector.set(threadIndex + i, vector.get(i + threadIndex) + vector2.get(i + threadIndex));
+        }
+    }
+
 
     /** Copies the values of another vector to this one
      * @param v, vector to copy.

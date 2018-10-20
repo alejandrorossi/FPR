@@ -2,5 +2,5 @@ package model;
 
 public enum VectorTask {
     SET,
-    SUM
+    ADD, SUM
 }

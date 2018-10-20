@@ -61,6 +61,14 @@ public class ConcurVector {
         pool.set(d, this);
     }
 
+    /** Suma los valores de este vector con los de otro (uno a uno).
+     * @param v, el vector con los valores a sumar.
+     * @precondition dimension() == v.dimension(). */
+    public void add(ConcurVector v) {
+        ThreadPool pool = new ThreadPool(threads, VectorTask.ADD);
+        pool.add(this, v);
+    }
+
     /** Obtiene la suma de todos los valores del vector. */
     public double sum() {
         // cuantos resultados voy a tener, inicialmente

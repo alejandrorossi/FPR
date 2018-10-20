@@ -80,4 +80,18 @@ public class ThreadPool {
             threadIndex += elemsPerWorker;
         }
     }
+
+    /**
+     * suma los valores en v1
+     */
+    public void add(ConcurVector v1, ConcurVector v2) {
+        int elemsPerWorker = v1.dimension() / threads;
+        int threadIndex = 0;
+        for (int i = 0; i < threads; i++) {
+            Worker worker = new Worker(elemsPerWorker, threadIndex, v1, v2, new Task(VectorTask.ADD));
+            Thread thread = new Thread(worker);
+            thread.start();
+            threadIndex += elemsPerWorker;
+        }
+    }
 }
