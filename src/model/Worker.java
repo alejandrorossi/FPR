@@ -66,6 +66,9 @@ public class Worker implements Runnable {
             case SUM:
                 this.sum();
                 break;
+            case MAX:
+                this.max();
+                break;
             case ADD:
                 this.add();
                 break;
@@ -81,30 +84,6 @@ public class Worker implements Runnable {
         }
     }
 
-    /**TODO: el worker debe finalizar ejecucion al encontrar elemento invalido
-    podemos hacerlo que en este metodo evalue validez y ya dispare una exception, o manejar el corte de ejecucion
-    desde el metodo que llame a este  */
-    private boolean elemIsValid(double d) {
-        //if d!int then exception
-        return true;
-    }
-
-
-    private void sacarYagregar(double d){
-//        input.poll();
-//        output.add(d);
-    }
-
-
-
-    /**
-     * tells the worker to take one more element from the buffer
-     * IMPORTANT: this method should be called before starting the thread
-     * PRECONDITION: assumes action can be done and this method will be called only once
-     */
-    public void plusOne() {
-//        elements++;
-    }
 
     /**
      * takes elements from input buffers, sums them and adds result into output buffer
@@ -115,6 +94,19 @@ public class Worker implements Runnable {
         for (int i = 0;i < task.cantValues; i++) {
             double x = this.input.poll();
             result += x;
+        }
+
+        this.output.add(result);
+    }
+
+
+
+    private void max() {
+        double result = 0.0;
+
+        for (int i = 0;i < task.cantValues; i++) {
+            double x = this.input.poll();
+            result = Math.max(x, result);
         }
 
         this.output.add(result);

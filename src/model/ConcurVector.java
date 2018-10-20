@@ -131,5 +131,32 @@ public class ConcurVector {
         return total / this.dimension();
     }
 
+    /** Obtiene el valor maximo en el vector. */
+    public double max() {
+        // cuantos resultados voy a tener, inicialmente
+        // la misma cantidad que de threads trabajando
+        int results = this.threads;
+
+        // buffer de resultados, inicialmente creado con tanta cantidad como elementos
+        // tiene el vector
+        Buffer b = new Buffer(this.elements.length);
+
+        // cargo el buffer
+        this.load(b);
+
+        while (results >= 1) {
+
+            ThreadPool pool = new ThreadPool(results, VectorTask.MAX);
+
+            // arranco la suma y actualizo el buffer al que tendra los resultados
+            // en la proxima iteracion
+            b = pool.max(b);
+            b.waitTillFull();
+
+            results = results / 2;
+        }
+
+        return b.poll();
+    }
 
 }
