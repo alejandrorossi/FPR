@@ -9,10 +9,7 @@ public class Main {
         for(int i = 0; i < cv.dimension(); i++)
             cv.set(i,i);
 
-        ConcurVector cv1 = new ConcurVector(100, 20);
-        cv1.set(2);
-
-        System.out.println(cv.prod(cv1));
+        System.out.println(cv.norm());
 
 //        Thread.sleep(500);
 

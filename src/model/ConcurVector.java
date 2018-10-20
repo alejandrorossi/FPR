@@ -169,4 +169,11 @@ public class ConcurVector {
         return b.poll();
     }
 
+    /** Retorna la norma del vector.
+     *  Recordar que la norma se calcula haciendo la raiz cuadrada de la
+     *  suma de los cuadrados de sus coordenadas.
+     */
+    public double norm() {
+        return Math.sqrt(this.prod(this));
+    }
 }
