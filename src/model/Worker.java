@@ -5,6 +5,7 @@ package model;
  */
 public class Worker implements Runnable {
 
+    private ConcurVector mask;
     private ConcurVector vector2;
     private ConcurVector vector;
     private double d;
@@ -43,6 +44,15 @@ public class Worker implements Runnable {
         this.task = task;
     }
 
+    public Worker(int elemsPerWorker, int threadIndex, ConcurVector v1, ConcurVector mask, ConcurVector v2, Task task) {
+        this.elemsPerWorker = elemsPerWorker;
+        this.threadIndex = threadIndex;
+        this.vector = v1;
+        this.vector2 = v2;
+        this.mask = mask;
+        this.task = task;
+    }
+
 
     /**
      * for now, just sums elements
@@ -58,6 +68,12 @@ public class Worker implements Runnable {
                 break;
             case ADD:
                 this.add();
+                break;
+            case ASSIGN:
+                this.assign();
+                break;
+            case ASSIGN_MASK:
+                this.assign_mask();
                 break;
         }
     }
@@ -119,28 +135,21 @@ public class Worker implements Runnable {
 
 
     /** Copies the values of another vector to this one
-     * @param v, vector to copy.
      * @precondition dimension() == v.dimension(). */
-    public void assign(SeqVector v) { //TODO: ver si el tipo de parametro será este u otro concurVector
-        for (int i = v.dimension(); i > 0; --i){ //para secVector
-        //for (int i = elements; i > 0; --i){ //para concurVector
-            sacarYagregar(v.get(i));
+    public void assign() {
+        for (int i = 0; i < elemsPerWorker; i++) {
+            vector.set(threadIndex + i, vector2.get(i + threadIndex));
         }
     }
 
     /** Copies some calues of another vector into this one.
      * Un vector mascara indica cuales valores deben copiarse.
-     * @param mask, vector que determina si una posicion se debe copiar.
-     * @param v, el vector del que se tomaran los valores nuevos.
      * @precondition dimension() == mask.dimension() && dimension() == v.dimension(). */
-    public void assign(SeqVector mask, SeqVector v) {
-        for (int i = v.dimension(); i > 0; --i) //para secVector
-//         for (int i = elements; i > 0; --i){ //para concurVector
-            if (mask.get(i) >= 0)  //si es igual o mayor a 0  copia
-                sacarYagregar(v.get(i));
+    private void assign_mask() {
+        for (int i = 0; i < elemsPerWorker; i++) {
+            if (mask.get(i + threadIndex) >= 0)
+                vector.set(threadIndex + i, vector2.get(i + threadIndex));
+        }
     }
-
-
-
 
 }

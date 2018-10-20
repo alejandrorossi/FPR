@@ -150,8 +150,5 @@ public class SeqVector {
         return current_max;
     }
 
-
-
-
 }
 

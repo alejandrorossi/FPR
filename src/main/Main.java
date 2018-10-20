@@ -22,7 +22,22 @@ public class Main {
 
         cv.set(99);
 
-        cv.add(cv);
+        ConcurVector cv2 = new ConcurVector(12, 6);
+
+        cv2.set(0, 1);
+        cv2.set(1, 1);
+        cv2.set(2, 123);
+        cv2.set(3, 1);
+        cv2.set(4, 1);
+        cv2.set(5, 1);
+        cv2.set(6, 5);
+        cv2.set(7, 6);
+        cv2.set(8, 5);
+        cv2.set(9, 1);
+        cv2.set(10, 1);
+        cv2.set(11, 2);
+
+        cv.assign(cv2);
 
         Thread.sleep(500);
 

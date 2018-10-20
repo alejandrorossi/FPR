@@ -61,6 +61,24 @@ public class ConcurVector {
         pool.set(d, this);
     }
 
+    /** Copia los valores de otro vector sobre este vector.
+     * @param v, el vector del que se tomaran los valores nuevos.
+     * @precondition dimension() == v.dimension(). */
+    public void assign(ConcurVector v) {
+        ThreadPool pool = new ThreadPool(threads, VectorTask.ASSIGN);
+        pool.assign(this, v);
+    }
+
+    /** Copia algunos valores de otro vector sobre este vector.
+     * Un vector mascara indica cuales valores deben copiarse.
+     * @param mask, vector que determina si una posicion se debe copiar.
+     * @param v, el vector del que se tomaran los valores nuevos.
+     * @precondition dimension() == mask.dimension() && dimension() == v.dimension(). */
+    public void assign(ConcurVector mask, ConcurVector v) {
+        ThreadPool pool = new ThreadPool(threads, VectorTask.ASSIGN);
+        pool.assign(this, mask, v);
+    }
+
     /** Suma los valores de este vector con los de otro (uno a uno).
      * @param v, el vector con los valores a sumar.
      * @precondition dimension() == v.dimension(). */
