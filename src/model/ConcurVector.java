@@ -111,21 +111,25 @@ public class ConcurVector {
         this.load(b);
 
         while (results >= 1) {
-            System.out.println("Results: " + results);
-            // creo el pool
+
             ThreadPool pool = new ThreadPool(results, VectorTask.SUM);
 
             // arranco la suma y actualizo el buffer al que tendra los resultados
             // en la proxima iteracion
             b = pool.sum(b);
-            System.out.println(b);
-
             b.waitTillFull();
 
             results = results / 2;
         }
 
-        System.out.println(b);
         return b.poll();
     }
+
+    /** Obtiene el valor promedio en el vector. */
+    public double mean() {
+        double total = this.sum();
+        return total / this.dimension();
+    }
+
+
 }
