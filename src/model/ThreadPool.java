@@ -31,7 +31,7 @@ public class ThreadPool {
         this.over = this.size % this.threads;
     }
 
-    private void initWorkers(){
+    private void initWorkers(VectorTask vTask){
         this.size = this.input.size();
 
         this.calculateElemsForWorkers();
@@ -39,9 +39,9 @@ public class ThreadPool {
         for(int i = 0; i < this.threads; ++i){
             Task t;
             if(i == 0){
-                t = new Task(VectorTask.SUM, this.elements + this.over);
+                t = new Task(vTask, this.elements + this.over);
             }else{
-                t = new Task(VectorTask.SUM, this.elements);
+                t = new Task(vTask, this.elements);
             }
 
             Worker w = new Worker(t, this.input, this.output);
@@ -59,8 +59,16 @@ public class ThreadPool {
 
         this.input = b;
 
-        this.initWorkers();
+        this.initWorkers(VectorTask.SUM);
 
+        return this.output;
+    }
+
+
+
+    public Buffer max(Buffer b) {
+        this.input = b;
+        this.initWorkers(VectorTask.MAX);
         return this.output;
     }
 
@@ -127,5 +135,4 @@ public class ThreadPool {
             threadIndex += elemsPerWorker;
         }
     }
-
 }
