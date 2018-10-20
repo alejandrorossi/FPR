@@ -91,14 +91,14 @@ public class ConcurVector {
      *  (uno a uno).
      * @param v, el vector con los valores a multiplicar.
      * @precondition dimension() == v.dimension(). */
-    public void mul(ConcurVector v) {
+    public  void mul(ConcurVector v) {
         ThreadPool pool = new ThreadPool(threads, VectorTask.MUL);
         pool.mul(this, v);
     }
 
 
     /** Obtiene la suma de todos los valores del vector. */
-    public double sum() {
+    public  double sum() {
         // cuantos resultados voy a tener, inicialmente
         // la misma cantidad que de threads trabajando
         int results = this.threads;
@@ -131,5 +131,13 @@ public class ConcurVector {
         return total / this.dimension();
     }
 
-
+    /** Retorna el producto de este vector con otro.
+     * El producto vectorial consiste en la suma de los productos
+     * de cada coordenada.
+     * @param cv, el vector a usar para realizar el producto.
+     * @precondition dimension() == v.dimension(). */
+    public double prod(ConcurVector cv) {
+        this.mul(cv);
+        return this.sum();
+    }
 }
