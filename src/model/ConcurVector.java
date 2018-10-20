@@ -54,6 +54,12 @@ public class ConcurVector {
      * de manera concurrente
      */
 
+    /** Pone el valor d en todas las posiciones del vector.
+     * @param d, el valor a ser asignado. */
+    public void set(double d) {
+        ThreadPool pool = new ThreadPool(threads, VectorTask.SET);
+    }
+
     /** Obtiene la suma de todos los valores del vector. */
     public double sum() {
         // cuantos resultados voy a tener, inicialmente
@@ -70,7 +76,7 @@ public class ConcurVector {
         while (results >= 1) {
             System.out.println("Results: " + results);
             // creo el pool
-            ThreadPool pool = new ThreadPool(results ,VectorTask.SUM);
+            ThreadPool pool = new ThreadPool(results, VectorTask.SUM);
 
             // arranco la suma y actualizo el buffer al que tendra los resultados
             // en la proxima iteracion
