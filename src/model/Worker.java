@@ -18,6 +18,7 @@ public class Worker implements Runnable {
     private Task task;
 
     /**
+     *
      * @param task the amount of elements to take from the buffer and the type task
      * @param input element service
      */
@@ -56,13 +57,11 @@ public class Worker implements Runnable {
     /**
      * for now, just sums elements
      */
-    //sums elements
     @Override
     public void run() {
         switch (task.type) {
             case SET:
                 this.set(d, vector, threadIndex, elemsPerWorker);
-                //
                 break;
             case SUM:
                 this.sum();
@@ -79,6 +78,30 @@ public class Worker implements Runnable {
         }
     }
 
+    /**TODO: el worker debe finalizar ejecucion al encontrar elemento invalido
+    podemos hacerlo que en este metodo evalue validez y ya dispare una exception, o manejar el corte de ejecucion
+    desde el metodo que llame a este  */
+    private boolean elemIsValid(double d) {
+        //if d!int then exception
+        return true;
+    }
+
+
+    private void sacarYagregar(double d){
+//        input.poll();
+//        output.add(d);
+    }
+
+
+
+    /**
+     * tells the worker to take one more element from the buffer
+     * IMPORTANT: this method should be called before starting the thread
+     * PRECONDITION: assumes action can be done and this method will be called only once
+     */
+    public void plusOne() {
+//        elements++;
+    }
 
     /**
      * takes elements from input buffers, sums them and adds result into output buffer
@@ -110,13 +133,6 @@ public class Worker implements Runnable {
         }
     }
 
-    public void set(double d) {
-
-//        for (int i = 0; i < elements; ++i){
-//            sacarYagregar(d);
-//        }
-    }
-
 
     /** Copies the values of another vector to this one
      * @precondition dimension() == v.dimension(). */
@@ -126,14 +142,7 @@ public class Worker implements Runnable {
         }
     }
 
-    public void assign(SeqVector v) { //TODO: ver si el tipo de parametro será este u otro concurVector
-        for (int i = v.dimension(); i > 0; --i){ //para secVector
-        //for (int i = elements; i > 0; --i){ //para concurVector
-            //sacarYagregar(v.get(i));
-        }
-    }
-
-    /** Copies some values of another vector into this one.
+    /** Copies some calues of another vector into this one.
      * Un vector mascara indica cuales valores deben copiarse.
      * @precondition dimension() == mask.dimension() && dimension() == v.dimension(). */
     private void assign_mask() {
@@ -141,13 +150,6 @@ public class Worker implements Runnable {
             if (mask.get(i + threadIndex) >= 0)
                 vector.set(threadIndex + i, vector2.get(i + threadIndex));
         }
-    }
-
-    public void assign(SeqVector mask, SeqVector v) {
-        //for (int i = v.dimension(); i > 0; --i) //para secVector
-//         for (int i = elements; i > 0; --i){ //para concurVector
-           // if (mask.get(i) >= 0)  //si es igual o mayor a 0  copia
-
     }
 
 }
