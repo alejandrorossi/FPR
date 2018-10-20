@@ -87,6 +87,16 @@ public class ConcurVector {
         pool.add(this, v);
     }
 
+    /** Multiplica los valores de este vector con los de otro
+     *  (uno a uno).
+     * @param v, el vector con los valores a multiplicar.
+     * @precondition dimension() == v.dimension(). */
+    public void mul(ConcurVector v) {
+        ThreadPool pool = new ThreadPool(threads, VectorTask.MUL);
+        pool.mul(this, v);
+    }
+
+
     /** Obtiene la suma de todos los valores del vector. */
     public double sum() {
         // cuantos resultados voy a tener, inicialmente

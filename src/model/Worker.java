@@ -75,6 +75,9 @@ public class Worker implements Runnable {
             case ASSIGN_MASK:
                 this.assign_mask();
                 break;
+            case MUL:
+                this.mul();
+                break;
         }
     }
 
@@ -149,6 +152,14 @@ public class Worker implements Runnable {
         for (int i = 0; i < elemsPerWorker; i++) {
             if (mask.get(i + threadIndex) >= 0)
                 vector.set(threadIndex + i, vector2.get(i + threadIndex));
+        }
+    }
+
+    /** Copies the values of another vector to this one
+     * @precondition dimension() == v.dimension(). */
+    public void mul() {
+        for (int i = 0; i < elemsPerWorker; i++) {
+            vector.set(threadIndex + i, vector.get(i + threadIndex) * vector2.get(i + threadIndex));
         }
     }
 

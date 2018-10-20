@@ -116,4 +116,16 @@ public class ThreadPool {
             threadIndex += elemsPerWorker;
         }
     }
+
+    public void mul(ConcurVector v1, ConcurVector v2) {
+        int elemsPerWorker = v1.dimension() / threads;
+        int threadIndex = 0;
+        for (int i = 0; i < threads; i++) {
+            Worker worker = new Worker(elemsPerWorker, threadIndex, v1, v2, new Task(VectorTask.MUL));
+            Thread thread = new Thread(worker);
+            thread.start();
+            threadIndex += elemsPerWorker;
+        }
+    }
+
 }
