@@ -29,8 +29,6 @@ public class Buffer {
                 e.printStackTrace();
             }
         }
-
-        System.out.println(this + " - In: " + d);
         list.add(d);
         notifyAll();
     }
@@ -59,7 +57,6 @@ public class Buffer {
         }
 
         Double ret = list.poll();
-        System.out.println(this + " - Out: " + ret);
         notifyAll();
         return ret;
     }

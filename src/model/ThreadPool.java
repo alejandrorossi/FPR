@@ -25,8 +25,6 @@ public class ThreadPool {
     }
 
     private void calculateElemsForWorkers(){
-        //f(this.size < this.threads){ this.threads = this.size /2; }
-
         this.elements = this.size / this.threads;
         this.over = this.size % this.threads;
     }

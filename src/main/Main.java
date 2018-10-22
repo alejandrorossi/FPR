@@ -5,15 +5,14 @@ import model.ConcurVector;
 public class Main {
 
     public static void main(String[] args) throws InterruptedException {
-        ConcurVector cv = new ConcurVector(100, 20);
-        for(int i = 0; i < cv.dimension(); i++)
-            cv.set(i,i);
+        ConcurVector cv = new ConcurVector(10, 5);
+        cv.set(1);
 
-        System.out.println(cv.norm());
+        Thread.sleep(500);
 
-//        Thread.sleep(500);
+        for (int i = 0; i < cv.dimension(); i++)
+            System.out.println(cv.get(i));
 
-//        for (int i = 0; i < cv.dimension(); i++)
-//            System.out.println(cv.get(i));
+        System.out.println(cv.sum());
     }
 }
