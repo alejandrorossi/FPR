@@ -3,13 +3,11 @@ package model;
 import java.util.LinkedList;
 
 public class Buffer {
-    // buffer size
+
     private int size;
-    // buffer implementation
-    private LinkedList<Double> list ;
+    private LinkedList<Double> list;
 
     /**
-     *
      * @param size buffers max capacity
      */
     public Buffer(int size) {

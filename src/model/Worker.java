@@ -11,14 +11,12 @@ public class Worker implements Runnable {
     private double d;
     private int threadIndex;
     private int elemsPerWorker;
-    private double setVal;
-    long threadId = Thread.currentThread().getId();
+   // long threadId = Thread.currentThread().getId();
     private Buffer input;
     private Buffer output;
     private Task task;
 
     /**
-     *
      * @param task the amount of elements to take from the buffer and the type task
      * @param input element service
      */
@@ -54,9 +52,6 @@ public class Worker implements Runnable {
     }
 
 
-    /**
-     * for now, just sums elements
-     */
     @Override
     public void run() {
         switch (task.type) {
@@ -85,9 +80,7 @@ public class Worker implements Runnable {
     }
 
 
-    /**
-     * takes elements from input buffers, sums them and adds result into output buffer
-     */
+
     public void sum() {
         double result = 0.0;
 
@@ -137,7 +130,7 @@ public class Worker implements Runnable {
         }
     }
 
-    /** Copies some calues of another vector into this one.
+    /** Copies some values of another vector into this one.
      * Un vector mascara indica cuales valores deben copiarse.
      * @precondition dimension() == mask.dimension() && dimension() == v.dimension(). */
     private void assign_mask() {

@@ -132,8 +132,7 @@ public class ConcurVector {
     }
 
     /** Retorna el producto de este vector con otro.
-     * El producto vectorial consiste en la suma de los productos
-     * de cada coordenada.
+     * El producto vectorial consiste en la suma de los productos de cada coordenada.
      * @param cv, el vector a usar para realizar el producto.
      * @precondition dimension() == v.dimension(). */
     public double prod(ConcurVector cv) {
@@ -143,23 +142,13 @@ public class ConcurVector {
 
     /** Obtiene el valor maximo en el vector. */
     public double max() {
-        // cuantos resultados voy a tener, inicialmente
-        // la misma cantidad que de threads trabajando
+
         int results = this.threads;
-
-        // buffer de resultados, inicialmente creado con tanta cantidad como elementos
-        // tiene el vector
         Buffer b = new Buffer(this.elements.length);
-
-        // cargo el buffer
         this.load(b);
 
         while (results >= 1) {
-
             ThreadPool pool = new ThreadPool(results, VectorTask.MAX);
-
-            // arranco la suma y actualizo el buffer al que tendra los resultados
-            // en la proxima iteracion
             b = pool.max(b);
             b.waitTillFull();
 

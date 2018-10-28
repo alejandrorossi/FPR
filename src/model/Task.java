@@ -4,12 +4,12 @@ public class Task {
     public VectorTask type;
     public int cantValues;
 
-    public Task(VectorTask type, int cv){
+    public Task(VectorTask type, int cantValues){
         this.type = type;
-        this.cantValues = cv;
+        this.cantValues = cantValues;
     }
 
-    public Task(VectorTask set) {
-        this.type = set;
+    public Task(VectorTask type) {
+        this.type = type;
     }
 }

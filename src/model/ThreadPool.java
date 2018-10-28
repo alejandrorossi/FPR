@@ -1,6 +1,5 @@
 package model;
 
-import java.util.Vector;
 
 public class ThreadPool {
 
@@ -14,7 +13,6 @@ public class ThreadPool {
     private VectorTask typeTask;
 
     /**
-     *
      * @param threads the amount of threads (workers) to initialize per task
      * @param task type task
      */
