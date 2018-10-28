@@ -11,6 +11,7 @@ public class ThreadPool {
     private int elements; //The amount of elements each worker takes from input buffer
     private int over = 0; //The amount of elements that some worker must take more
     private VectorTask typeTask;
+    private Worker[] workers;
 
     /**
      * @param threads the amount of threads (workers) to initialize per task
@@ -20,6 +21,7 @@ public class ThreadPool {
         this.threads = threads;
         this.typeTask = task;
         this.output = new Buffer(this.threads);
+        this.workers= new Worker[size]; //TODO: inicializar bien
     }
 
     private void calculateElemsForWorkers(){
@@ -43,7 +45,18 @@ public class ThreadPool {
             Worker w = new Worker(t, this.input, this.output);
 
             Thread wt = new Thread(w);
-            wt.start();
+            wt.start(); //todo: agregarlos a la lista
+            /*luego de que se agregan a la lista se recorren para darle start a todos
+            * deberiamos tener un metodo de recalcularTrabajo() que haga que los workers creados agarren mas elementos.
+            * Al principio de to do se fija si no hay workers entonces hace el initWorkers() y si hay workers en
+            * this.workers ejecuta el recalcularTrabajo()
+            *
+            * como solo hay un threadpool por operacion deberiamos mandar desde concurvector el start y el recalcularTrabajo()
+            *
+            * recalcularTrabajo() vendría a ser la segunda pasada en las operaciones que lo requieran
+            * */
+
+
         }
     }
 

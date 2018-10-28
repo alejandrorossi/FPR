@@ -1,8 +1,6 @@
 package model;
 
-/**
- * IMPORTANTE: esta clase se debe correr con start, no con run!
- */
+
 public class Worker implements Runnable {
 
     private ConcurVector mask;

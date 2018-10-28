@@ -5,7 +5,7 @@ public class ConcurVector {
     private double[] elements;
     private int threads;
 
-    private ThreadPool tpool;
+    private ThreadPool tpool;//Todo: usar este en todos los casos
 
     /** Constructor del ConcurVector.
      * @param size, la longitud del vector.
@@ -40,9 +40,8 @@ public class ConcurVector {
 
     /**
      * carga un buffer con todos los elementos del vector.
-     *
      * IMPORTANTE: provisorio, deberia ser implementado de la misma forma que sum, concurrente.
-     *
+     * todo: sigue siendo provisorio?
      * @param buffer
      */
     private void load(Buffer buffer) {
@@ -119,7 +118,8 @@ public class ConcurVector {
             b = pool.sum(b);
             b.waitTillFull();
 
-            results = results / 2;
+            results = results / 2; //todo: esto es lo que hace que cuando los threads no sean multiplo, explote porque al final no llega a completar elems
+			//todo: añadir logica al worker que cuando no pueda completar sus elementos para calculo, calcule igual, o espere a sguiente pasada
         }
 
         return b.poll();
