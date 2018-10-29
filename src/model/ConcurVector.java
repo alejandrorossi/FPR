@@ -14,6 +14,7 @@ public class ConcurVector {
     public ConcurVector(int size, int threads) {
         elements = new double[size];
         this.threads = threads;
+        tpool = new ThreadPool(this.threads);
     }
 
     /** Retorna la longitud del vector; es decir, su dimension. */
@@ -64,8 +65,8 @@ public class ConcurVector {
      * @param v, el vector del que se tomaran los valores nuevos.
      * @precondition dimension() == v.dimension(). */
     public void assign(ConcurVector v) {
-        ThreadPool pool = new ThreadPool(threads, VectorTask.ASSIGN);
-        pool.assign(this, v);
+//        ThreadPool pool = new ThreadPool(threads, VectorTask.ASSIGN);
+        this.tpool.assign(this, v);
     }
 
     /** Copia algunos valores de otro vector sobre este vector.
@@ -74,7 +75,10 @@ public class ConcurVector {
      * @param v, el vector del que se tomaran los valores nuevos.
      * @precondition dimension() == mask.dimension() && dimension() == v.dimension(). */
     public void assign(ConcurVector mask, ConcurVector v) {
-        ThreadPool pool = new ThreadPool(threads, VectorTask.ASSIGN);
+//        ThreadPool pool = new ThreadPool(threads, VectorTask.ASSIGN);
+
+        tpool.setTask(VectorTask.ASSIGN);
+
         pool.assign(this, mask, v);
     }
 
@@ -139,6 +143,8 @@ public class ConcurVector {
         this.mul(cv);
         return this.sum();
     }
+
+
 
     /** Obtiene el valor maximo en el vector. */
     public double max() {

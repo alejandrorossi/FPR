@@ -17,11 +17,15 @@ public class ThreadPool {
      * @param threads the amount of threads (workers) to initialize per task
      * @param task type task
      */
-    public ThreadPool(int threads, VectorTask task) {
+    public ThreadPool(int threads) {
         this.threads = threads;
-        this.typeTask = task;
         this.output = new Buffer(this.threads);
-        this.workers= new Worker[size]; //TODO: inicializar bien
+        this.workers= new Worker[threads]; //TODO: ver si es correcto esto
+    }
+
+    //hacemos el set para poder cambiar la operacion a gusto y antojo
+    public void setTask(VectorTask task){
+        this.typeTask = task;
     }
 
     private void calculateElemsForWorkers(){
@@ -43,22 +47,30 @@ public class ThreadPool {
             }
 
             Worker w = new Worker(t, this.input, this.output);
-
             Thread wt = new Thread(w);
-            wt.start(); //todo: agregarlos a la lista
-            /*luego de que se agregan a la lista se recorren para darle start a todos
-            * deberiamos tener un metodo de recalcularTrabajo() que haga que los workers creados agarren mas elementos.
-            * Al principio de to do se fija si no hay workers entonces hace el initWorkers() y si hay workers en
+           // wt.start();
+
+            agregarWorkerALista();
+
+            /** Al principio de to do se fija si no hay workers entonces hace el initWorkers() y si hay workers en
             * this.workers ejecuta el recalcularTrabajo()
             *
             * como solo hay un threadpool por operacion deberiamos mandar desde concurvector el start y el recalcularTrabajo()
             *
             * recalcularTrabajo() vendría a ser la segunda pasada en las operaciones que lo requieran
             * */
-
-
         }
     }
+
+    public void runWorkers(){
+        //recorre la lista de workers creados y los hace andar si tienen elementos
+        // y si ya no hay elementos que opere con lo que haya
+    }
+
+    public void recalcularTrabajo(){
+       // recorre la lista de workers y les setea los nuevos elementos
+    }
+
 
     /**
      * sums all elements in the buffer
