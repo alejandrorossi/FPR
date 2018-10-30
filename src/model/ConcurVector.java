@@ -14,7 +14,7 @@ public class ConcurVector {
     public ConcurVector(int size, int threads) {
         elements = new double[size];
         this.threads = threads;
-        tpool = new ThreadPool(this.threads);
+        tpool = new ThreadPool(size, threads);
     }
 
     /** Retorna la longitud del vector; es decir, su dimension. */
@@ -57,15 +57,13 @@ public class ConcurVector {
     /** Pone el valor d en todas las posiciones del vector.
      * @param d, el valor a ser asignado. */
     public void set(double d) {
-        ThreadPool pool = new ThreadPool(threads, VectorTask.SET);
-        pool.set(d, this);
+        this.tpool.set(d, this);
     }
 
     /** Copia los valores de otro vector sobre este vector.
      * @param v, el vector del que se tomaran los valores nuevos.
      * @precondition dimension() == v.dimension(). */
     public void assign(ConcurVector v) {
-//        ThreadPool pool = new ThreadPool(threads, VectorTask.ASSIGN);
         this.tpool.assign(this, v);
     }
 
@@ -75,19 +73,14 @@ public class ConcurVector {
      * @param v, el vector del que se tomaran los valores nuevos.
      * @precondition dimension() == mask.dimension() && dimension() == v.dimension(). */
     public void assign(ConcurVector mask, ConcurVector v) {
-//        ThreadPool pool = new ThreadPool(threads, VectorTask.ASSIGN);
-
-        tpool.setTask(VectorTask.ASSIGN);
-
-        pool.assign(this, mask, v);
+        tpool.assign(this, mask, v);
     }
 
     /** Suma los valores de este vector con los de otro (uno a uno).
      * @param v, el vector con los valores a sumar.
      * @precondition dimension() == v.dimension(). */
     public void add(ConcurVector v) {
-        ThreadPool pool = new ThreadPool(threads, VectorTask.ADD);
-        pool.add(this, v);
+        this.tpool.add(this, v);
     }
 
     /** Multiplica los valores de este vector con los de otro
@@ -95,8 +88,7 @@ public class ConcurVector {
      * @param v, el vector con los valores a multiplicar.
      * @precondition dimension() == v.dimension(). */
     public  void mul(ConcurVector v) {
-        ThreadPool pool = new ThreadPool(threads, VectorTask.MUL);
-        pool.mul(this, v);
+        this.tpool.mul(this, v);
     }
 
 
@@ -114,16 +106,13 @@ public class ConcurVector {
         this.load(b);
 
         while (results >= 1) {
-
-            ThreadPool pool = new ThreadPool(results, VectorTask.SUM);
-
             // arranco la suma y actualizo el buffer al que tendra los resultados
             // en la proxima iteracion
-            b = pool.sum(b);
+            b = this.tpool.sum(b);
             b.waitTillFull();
 
-            results = results / 2; //todo: esto es lo que hace que cuando los threads no sean multiplo, explote porque al final no llega a completar elems
-			//todo: añadir logica al worker que cuando no pueda completar sus elementos para calculo, calcule igual, o espere a sguiente pasada
+            results = b.size();
+            this.tpool.setSize(results);
         }
 
         return b.poll();
@@ -148,17 +137,15 @@ public class ConcurVector {
 
     /** Obtiene el valor maximo en el vector. */
     public double max() {
-
         int results = this.threads;
         Buffer b = new Buffer(this.elements.length);
         this.load(b);
 
         while (results >= 1) {
-            ThreadPool pool = new ThreadPool(results, VectorTask.MAX);
-            b = pool.max(b);
+            b = this.tpool.max(b);
             b.waitTillFull();
 
-            results = results / 2;
+            results = b.size();
         }
 
         return b.poll();

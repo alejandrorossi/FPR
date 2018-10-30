@@ -3,58 +3,23 @@ package model;
 
 public class Worker implements Runnable {
 
-    private ConcurVector mask;
-    private ConcurVector vector2;
-    private ConcurVector vector;
-    private double d;
     private int threadIndex;
     private int elemsPerWorker;
-   // long threadId = Thread.currentThread().getId();
-    private Buffer input;
-    private Buffer output;
     private Task task;
 
-    /**
-     * @param task the amount of elements to take from the buffer and the type task
-     * @param input element service
-     */
-    public Worker(Task task, Buffer input, Buffer output) {
-        this.input = input;
-        this.output = output;
-        this.task = task;
-    }
+    public Worker(){}
 
-    public Worker(int elemsPerWorker, int threadIndex, double d, ConcurVector vector, Task task) {
-        this.elemsPerWorker = elemsPerWorker;
+    public void setData(int threadIndex, int elements, Task task) {
         this.threadIndex = threadIndex;
-        this.d = d;
-        this.vector = vector;
+        this.elemsPerWorker = elements;
         this.task = task;
     }
-
-    public Worker(int elemsPerWorker, int threadIndex, ConcurVector v1, ConcurVector v2, Task task) {
-        this.elemsPerWorker = elemsPerWorker;
-        this.threadIndex = threadIndex;
-        this.vector = v1;
-        this.vector2 = v2;
-        this.task = task;
-    }
-
-    public Worker(int elemsPerWorker, int threadIndex, ConcurVector v1, ConcurVector mask, ConcurVector v2, Task task) {
-        this.elemsPerWorker = elemsPerWorker;
-        this.threadIndex = threadIndex;
-        this.vector = v1;
-        this.vector2 = v2;
-        this.mask = mask;
-        this.task = task;
-    }
-
 
     @Override
     public void run() {
         switch (task.type) {
             case SET:
-                this.set(d, vector, threadIndex, elemsPerWorker);
+                this.set();
                 break;
             case SUM:
                 this.sum();
@@ -77,54 +42,48 @@ public class Worker implements Runnable {
         }
     }
 
-
-
     public void sum() {
         double result = 0.0;
 
-        for (int i = 0;i < task.cantValues; i++) {
-            double x = this.input.poll();
+        for (int i = 0;i < elemsPerWorker; i++) {
+            double x = this.task.input.poll();
             result += x;
         }
 
-        this.output.add(result);
+        this.task.output.add(result);
     }
-
-
 
     private void max() {
         double result = 0.0;
 
-        for (int i = 0;i < task.cantValues; i++) {
-            double x = this.input.poll();
+        for (int i = 0;i < elemsPerWorker; i++) {
+            double x = this.task.input.poll();
             result = Math.max(x, result);
         }
 
-        this.output.add(result);
+        this.task.output.add(result);
     }
 
-
-    /** Puts d value in all vector's positions.
-     * @param d, value to be assigned. */
-    public void set(double d, ConcurVector output, int index, int cant) {
-        for (int i = 0; i < cant; i++) {
-            output.set(index + i, d);
+    /** Puts d value in all vector's positions.*/
+    public void set() {
+        for (int i = 0; i < this.elemsPerWorker; i++) {
+            this.task.vectorDestination.set(this.threadIndex + i, this.task.value);
         }
     }
 
 
     private void add() {
         for (int i = 0; i < elemsPerWorker; i++) {
-            vector.set(threadIndex + i, vector.get(i + threadIndex) + vector2.get(i + threadIndex));
+            this.task.vectorDestination.set(threadIndex + i,
+                    this.task.vectorDestination.get(i + threadIndex) + this.task.vectorOrigin.get(i + threadIndex));
         }
     }
-
 
     /** Copies the values of another vector to this one
      * @precondition dimension() == v.dimension(). */
     public void assign() {
-        for (int i = 0; i < elemsPerWorker; i++) {
-            vector.set(threadIndex + i, vector2.get(i + threadIndex));
+        for (int i = 0; i < this.elemsPerWorker; i++) {
+            this.task.vectorDestination.set(this.threadIndex + i, this.task.vectorOrigin.get(i + this.threadIndex));
         }
     }
 
@@ -132,18 +91,19 @@ public class Worker implements Runnable {
      * Un vector mascara indica cuales valores deben copiarse.
      * @precondition dimension() == mask.dimension() && dimension() == v.dimension(). */
     private void assign_mask() {
-        for (int i = 0; i < elemsPerWorker; i++) {
-            if (mask.get(i + threadIndex) >= 0)
-                vector.set(threadIndex + i, vector2.get(i + threadIndex));
+        for (int i = 0; i < this.elemsPerWorker; i++) {
+            if (this.task.mask.get(i + this.threadIndex) >= 0)
+                this.task.vectorDestination.set(this.threadIndex + i,
+                        this.task.vectorOrigin.get(i + this.threadIndex));
         }
     }
 
     /** Copies the values of another vector to this one
      * @precondition dimension() == v.dimension(). */
     public void mul() {
-        for (int i = 0; i < elemsPerWorker; i++) {
-            vector.set(threadIndex + i, vector.get(i + threadIndex) * vector2.get(i + threadIndex));
+        for (int i = 0; i < this.elemsPerWorker; i++) {
+            this.task.vectorDestination.set(threadIndex + i,
+                    this.task.vectorDestination.get(i + this.threadIndex) * this.task.vectorOrigin.get(i + this.threadIndex));
         }
     }
-
 }
