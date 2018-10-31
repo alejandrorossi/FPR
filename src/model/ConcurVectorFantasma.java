@@ -1,20 +1,24 @@
 package model;
 
-public class ConcurVector {
+public class ConcurVectorFantasma implements Vector {
 
     private double[] elements;// El array con los elementos del vector
     private int threads;
 
     private ThreadPool tpool;
 
+    private SeqVector sv;
+
     /**
      * @param size, la longitud del vector.
      * @param threads, cantidad ḿaxima a utilizar.
      * @precondition size && threads  > 0. */
-    public ConcurVector(int size, int threads) {
+    public ConcurVectorFantasma(int size, int threads) {
         elements = new double[size];
         this.threads = threads;
         tpool = new ThreadPool(size, threads);
+
+        this.sv = new SeqVector(size);
     }
 
     /** Retorna la longitud del vector; es decir, su dimension. */
@@ -42,7 +46,7 @@ public class ConcurVector {
     /** Carga un buffer con todos los elementos del vector.
      * @param buffer
      */
-    private void load(Buffer buffer) {
+    public void load(Buffer buffer) {
         for (Double e: elements)
             buffer.add(e);
     }
@@ -53,14 +57,14 @@ public class ConcurVector {
 
     /** Pone el valor d en todas las posiciones del vector.
      * @param d, el valor a ser asignado. */
-    public void set(double d) {
+    public synchronized void set(double d) {
         this.tpool.set(d, this);
     }
 
     /** Copia los valores de otro vector sobre este vector.
      * @param v, el vector del que se tomaran los valores nuevos.
      * @precondition dimension() == v.dimension(). */
-    public void assign(ConcurVector v) {
+    public synchronized void assign(Vector v) {
         this.tpool.assign(this, v);
     }
 
@@ -69,14 +73,14 @@ public class ConcurVector {
      * @param mask, vector que determina si una posicion se debe copiar.
      * @param v, el vector del que se tomaran los valores nuevos.
      * @precondition dimension() == mask.dimension() && dimension() == v.dimension(). */
-    public void assign(ConcurVector mask, ConcurVector v) {
+    public synchronized void assign(Vector mask, Vector v) {
         tpool.assign(this, mask, v);
     }
 
     /** Suma los valores de este vector con los de otro (uno a uno).
      * @param v, el vector con los valores a sumar.
      * @precondition dimension() == v.dimension(). */
-    public void add(ConcurVector v) {
+    public synchronized void add(Vector v) {
         this.tpool.add(this, v);
     }
 
@@ -84,13 +88,13 @@ public class ConcurVector {
      *  (uno a uno).
      * @param v, el vector con los valores a multiplicar.
      * @precondition dimension() == v.dimension(). */
-    public  void mul(ConcurVector v) {
+    public  synchronized void mul(Vector v) {
         this.tpool.mul(this, v);
     }
 
 
     /** Obtiene la suma de todos los valores del vector. */
-    public  double sum() {
+    public  synchronized double sum() {
         // cuantos resultados voy a tener, inicialmente
         // la misma cantidad que de threads trabajando
         int results = this.threads;
@@ -102,7 +106,7 @@ public class ConcurVector {
         // cargo el buffer
         this.load(b);
 
-        while (results >= 1) {
+        while (results > 1) {
             // arranco la suma y actualizo el buffer al que tendra los resultados
             // en la proxima iteracion
             b = this.tpool.sum(b);
@@ -112,11 +116,16 @@ public class ConcurVector {
             this.tpool.setSize(results);
         }
 
+        if (results == 1) {
+            b = this.tpool.sum(b);
+            b.waitTillFull();
+        }
+
         return b.poll();
     }
 
     /** Obtiene el valor promedio en el vector. */
-    public double mean() {
+    public synchronized double mean() {
         double total = this.sum();
         return total / this.dimension();
     }
@@ -125,7 +134,7 @@ public class ConcurVector {
      * El producto vectorial consiste en la suma de los productos de cada coordenada.
      * @param cv, el vector a usar para realizar el producto.
      * @precondition dimension() == v.dimension(). */
-    public double prod(ConcurVector cv) {
+    public synchronized double prod(Vector cv) {
         this.mul(cv);
         return this.sum();
     }
@@ -133,16 +142,17 @@ public class ConcurVector {
 
 
     /** Obtiene el valor maximo en el vector. */
-    public double max() {
+    public synchronized double max() {
         int results = this.threads;
         Buffer b = new Buffer(this.elements.length);
         this.load(b);
 
-        while (results >= 1) {
+        while (results > 1) {
             b = this.tpool.max(b);
             b.waitTillFull();
 
             results = b.size();
+            this.tpool.setSize(results);
         }
 
         return b.poll();
@@ -152,7 +162,7 @@ public class ConcurVector {
      *  Recordar que la norma se calcula haciendo la raiz cuadrada de la
      *  suma de los cuadrados de sus coordenadas.
      */
-    public double norm() {
+    public synchronized double norm() {
         return Math.sqrt(this.prod(this));
     }
 }

@@ -32,7 +32,7 @@ public class Buffer {
     }
 
     public synchronized void waitTillFull() {
-        while (list.size() < this.size) {
+        while (list.size() != this.size) {
             try {
                 wait();
             } catch (InterruptedException e) {
@@ -62,7 +62,6 @@ public class Buffer {
     public int size(){ return this.list.size(); }
 
     public void printAll() {
-        System.out.println("asd");
         for (Double x:list)
             System.out.println(x);
 
