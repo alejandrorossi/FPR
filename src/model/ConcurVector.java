@@ -1,13 +1,13 @@
 package model;
 
 public class ConcurVector {
-    // El array con los elementos del vector
-    private double[] elements;
+
+    private double[] elements;// El array con los elementos del vector
     private int threads;
 
-    private ThreadPool tpool;//Todo: usar este en todos los casos
+    private ThreadPool tpool;
 
-    /** Constructor del ConcurVector.
+    /**
      * @param size, la longitud del vector.
      * @param threads, cantidad ḿaxima a utilizar.
      * @precondition size && threads  > 0. */
@@ -39,10 +39,7 @@ public class ConcurVector {
         elements[i] = d;
     }
 
-    /**
-     * carga un buffer con todos los elementos del vector.
-     * IMPORTANTE: provisorio, deberia ser implementado de la misma forma que sum, concurrente.
-     * todo: sigue siendo provisorio?
+    /** Carga un buffer con todos los elementos del vector.
      * @param buffer
      */
     private void load(Buffer buffer) {

@@ -1,6 +1,8 @@
 package model;
 
 
+import java.util.Arrays;
+
 public class ThreadPool {
 
     private int size;
@@ -12,8 +14,7 @@ public class ThreadPool {
     private Worker[] workers;
     private Task task = new Task();
 
-    /**
-     * @param threads the amount of threads (workers) to initialize per task
+    /** @param threads the amount of threads (workers) to initialize per task
      */
     public ThreadPool(int size, int threads) {
         this.size = size;
@@ -25,12 +26,35 @@ public class ThreadPool {
         this.size = size;
     }
 
-    /* TODO: mejorar calculo para varias pasadas.
-    * cuando se hacen varias pasadas (ej: sum y max), no termina nunca,
-    * intente cambiar cantidad de threads pero no funciona.
-    */
+
+
+    /** todo: no se bien cuando llamar este metodo, deberia ser antes de cada pasada
+     * si la cantidad de elementos  es menor al doble que de cantidad de workers, entonces en cada pasada
+     * calcular cantidad de workers en los que se va a repartir el trabajo:
+     * 		SI ES PAR: la cantidad de workers sera la mitad de elementos
+     * 		SI ES IMPAR: la cantidad de workers va a ser la mitad elementos redondeado para abajo
+     */
+    public void calcularWorkers(){
+
+        int cantWorkers = 0;
+        if (this.elements < (this.workers.length *2 )){
+
+            if(this.elements%2==0){
+                cantWorkers = this.elements/2;
+            }else{
+                cantWorkers= (int)Math.floor(this.elements /2);
+            }
+
+            Arrays.copyOf(workers, cantWorkers); //crea una copia del array con el largo de la cant de workers
+        }
+
+
+    }
+
+
     private void calculateElemsForWorkers(){
         int diff = 0;
+
         if(this.size == this.threads) {
             while (diff < 2) {
                 this.threads -= 1;
@@ -67,10 +91,7 @@ public class ThreadPool {
         }
     }
 
-    /**
-     * sums all elements in the buffer
-     * @return a buffer with partial results
-     */
+
     public Buffer sum(Buffer b) {
         this.task = new Task();
         this.task.setSum(b, this.threads);
