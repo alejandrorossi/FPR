@@ -10,13 +10,16 @@ public class ThreadPool {
     private int over = 0; //The amount of elements that some worker must take more
 
     private Worker[] workers;
-    private Task task = new Task();
+    public Task task = new Task();
+
+    private ConcrVector caller;
 
     /** @param threads the amount of threads (workers) to initialize per task
      */
-    public ThreadPool(int size, int threads) {
+    public ThreadPool(int size, int threads, ConcrVector caller) {
         this.size = size;
         this.threads = threads;
+        this.caller = caller;
         this.createWorkers();
     }
 
@@ -54,6 +57,7 @@ public class ThreadPool {
         this.task.setBufferOutput(this.threads);
         for(int i = 0; i < this.threads; i++) {
             Worker w = this.workers[i];
+            this.task.vectorDestination = this.caller;
             if (threadIndex > 0) {
                 w.setData(threadIndex, this.elements , this.task);
                 threadIndex += this.elements;

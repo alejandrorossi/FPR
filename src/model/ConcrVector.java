@@ -7,6 +7,8 @@ public class ConcrVector {
 
     private ThreadPool tpool;
 
+    public boolean working = false;
+
     /**
      * @param size, la longitud del vector.
      * @param threads, cantidad ḿaxima a utilizar.
@@ -14,7 +16,7 @@ public class ConcrVector {
     public ConcrVector(int size, int threads) {
         elements = new double[size];
         this.threads = threads;
-        tpool = new ThreadPool(size, threads);
+        tpool = new ThreadPool(size, threads, this);
     }
 
     /** Retorna la longitud del vector; es decir, su dimension. */
@@ -35,7 +37,7 @@ public class ConcrVector {
      * @param i, la posicion a setear.
      * @param d, el valor a ser asignado en la posicion i.
      * @precondition 0 <= i < dimension. */
-    public void set(int i, double d) {
+    public synchronized void set(int i, double d) {
         elements[i] = d;
     }
 
@@ -54,13 +56,26 @@ public class ConcrVector {
     /** Pone el valor d en todas las posiciones del vector.
      * @param d, el valor a ser asignado. */
     public synchronized void set(double d) {
+        superWait(VectorTask.SET);
         this.tpool.set(d, this);
+    }
+
+    private void superWait(VectorTask vtask) {
+        while (working && vtask != this.tpool.task.type){
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        this.working = true;
     }
 
     /** Copia los valores de otro ConcrVector sobre este vector.
      * @param v, el ConcrVector del que se tomaran los valores nuevos.
      * @precondition dimension() == v.dimension(). */
     public synchronized void assign(ConcrVector v) {
+        superWait(VectorTask.ASSIGN);
         this.tpool.assign(this, v);
     }
 
@@ -70,6 +85,7 @@ public class ConcrVector {
      * @param v, el ConcrVector del que se tomaran los valores nuevos.
      * @precondition dimension() == mask.dimension() && dimension() == v.dimension(). */
     public synchronized void assign(ConcrVector mask, ConcrVector v) {
+        superWait(VectorTask.ASSIGN_MASK);
         tpool.assign(this, mask, v);
     }
 
@@ -77,6 +93,7 @@ public class ConcrVector {
      * @param v, el ConcrVector con los valores a sumar.
      * @precondition dimension() == v.dimension(). */
     public synchronized void add(ConcrVector v) {
+        superWait(VectorTask.ADD);
         this.tpool.add(this, v);
     }
 
@@ -85,6 +102,7 @@ public class ConcrVector {
      * @param v, el ConcrVector con los valores a multiplicar.
      * @precondition dimension() == v.dimension(). */
     public  synchronized void mul(ConcrVector v) {
+        superWait(VectorTask.MUL);
         this.tpool.mul(this, v);
     }
 
@@ -135,8 +153,6 @@ public class ConcrVector {
         return this.sum();
     }
 
-
-
     /** Obtiene el valor maximo en el vector. */
     public synchronized double max() {
         int results = this.threads;
@@ -160,5 +176,10 @@ public class ConcrVector {
      */
     public synchronized double norm() {
         return Math.sqrt(this.prod(this));
+    }
+
+    public synchronized void finishWoking() {
+        this.working = false;
+        notifyAll();
     }
 }

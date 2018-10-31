@@ -8,7 +8,7 @@ public class Main {
 
         //TODO: probar otros metodos del ConcrVector!
 
-        ConcrVector cv = new ConcrVector(5, 1);
+        ConcrVector cv = new ConcrVector(5, 2);
         cv.set(1);
 
         ConcrVector cvOrigen = new ConcrVector(5, 3);

@@ -66,44 +66,69 @@ public class Worker implements Runnable {
 
     /** Puts d value in all vector's positions.*/
     public void set() {
+        int index = 0;
         for (int i = 0; i < this.elemsPerWorker; i++) {
-            this.task.vectorDestination.set(this.threadIndex + i, this.task.value);
+            index = this.threadIndex + i;
+            this.task.vectorDestination.set(index, this.task.value);
         }
+
+        if (index + 1 == this.task.vectorDestination.dimension())
+            this.task.vectorDestination.finishWoking();
     }
 
 
     private void add() {
+        int index = 0;
         for (int i = 0; i < elemsPerWorker; i++) {
-            this.task.vectorDestination.set(threadIndex + i,
-                    this.task.vectorDestination.get(i + threadIndex) + this.task.vectorOrigin.get(i + threadIndex));
+            index = this.threadIndex + i;
+            this.task.vectorDestination.set(index,
+                    this.task.vectorDestination.get(index) + this.task.vectorOrigin.get(index));
         }
+
+        if (index + 1 == this.task.vectorDestination.dimension())
+            this.task.vectorDestination.finishWoking();
     }
 
     /** Copies the values of another vector to this one
      * @precondition dimension() == v.dimension(). */
     public void assign() {
+        int index = 0;
         for (int i = 0; i < this.elemsPerWorker; i++) {
-            this.task.vectorDestination.set(this.threadIndex + i, this.task.vectorOrigin.get(i + this.threadIndex));
+            index = this.threadIndex + i;
+            this.task.vectorDestination.set(index, this.task.vectorOrigin.get(index));
         }
+
+        if (index + 1 == this.task.vectorDestination.dimension())
+            this.task.vectorDestination.finishWoking();
     }
 
     /** Copies some values of another vector into this one.
      * Un vector mascara indica cuales valores deben copiarse.
      * @precondition dimension() == mask.dimension() && dimension() == v.dimension(). */
     private void assign_mask() {
+        int index = 0;
         for (int i = 0; i < this.elemsPerWorker; i++) {
-            if (this.task.mask.get(i + this.threadIndex) >= 0)
-                this.task.vectorDestination.set(this.threadIndex + i,
-                        this.task.vectorOrigin.get(i + this.threadIndex));
+            index = this.threadIndex + i;
+            if (this.task.mask.get(index) >= 0)
+                this.task.vectorDestination.set(index,
+                        this.task.vectorOrigin.get(index));
         }
+
+        if (index + 1 == this.task.vectorDestination.dimension())
+            this.task.vectorDestination.finishWoking();
     }
 
     /** Copies the values of another vector to this one
      * @precondition dimension() == v.dimension(). */
     public void mul() {
+        int index = 0;
         for (int i = 0; i < this.elemsPerWorker; i++) {
-            this.task.vectorDestination.set(threadIndex + i,
-                    this.task.vectorDestination.get(i + this.threadIndex) * this.task.vectorOrigin.get(i + this.threadIndex));
+            index = this.threadIndex + i;
+            this.task.vectorDestination.set(index,
+                    this.task.vectorDestination.get(index) * this.task.vectorOrigin.get(index));
         }
+
+        if (index + 1 == this.task.vectorDestination.dimension())
+            this.task.vectorDestination.finishWoking();
     }
 }
