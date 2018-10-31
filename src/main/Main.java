@@ -1,13 +1,12 @@
 package main;
 
 import model.ConcrVector;
-import model.ConcurVectorFantasma;
 
 public class Main {
 
     public static void main(String[] args) throws InterruptedException {
 
-        //TODO: probar otros metodos del ConcurVectorFantasma!
+        //TODO: probar otros metodos del ConcrVector!
 
         ConcrVector cv = new ConcrVector(5, 1);
         cv.set(1);

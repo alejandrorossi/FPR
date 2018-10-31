@@ -82,31 +82,31 @@ public class ThreadPool {
         return this.task.output;
     }
 
-    public void set(double d, Vector vector) {
+    public void set(double d, ConcrVector vector) {
         this.task = new Task();
         this.task.setSet(d, vector);
         this.runWorkers();
     }
 
-    public void add(Vector v1, Vector v2) {
+    public void add(ConcrVector v1, ConcrVector v2) {
         this.task = new Task();
         this.task.setAdd(v1, v2);
         this.runWorkers();
     }
 
-    public void assign(Vector v1, Vector v2) {
+    public void assign(ConcrVector v1, ConcrVector v2) {
         this.task = new Task();
         this.task.setAssign(v1, v2);
         this.runWorkers();
     }
 
-    public void assign(Vector v1, Vector mask, Vector v2) {
+    public void assign(ConcrVector v1, ConcrVector mask, ConcrVector v2) {
         this.task = new Task();
         this.task.setAssignMask(v1, mask, v2);
         this.runWorkers();
     }
 
-    public void mul(Vector v1, Vector v2) {
+    public void mul(ConcrVector v1, ConcrVector v2) {
         this.task = new Task();
         this.task.setMul(v1, v2);
         this.runWorkers();
