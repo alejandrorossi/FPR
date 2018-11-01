@@ -25,8 +25,9 @@ public class ThreadPool {
     }
 
     private void calculateElemsForWorkers(){
-        int diff = 0;
+        if(this.size < this.threads) this.threads = this.size;
 
+        int diff = 0;
         if(this.size == this.threads) {
             while (diff < 2 && this.threads > 1) {
                 this.threads -= 1;
