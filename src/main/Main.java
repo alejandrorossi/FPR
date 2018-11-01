@@ -26,6 +26,6 @@ public class Main {
         for (int i = 0; i < cv.dimension(); i++)
             System.out.println("En posicion "+i+ ": "+ cv.get(i));
 
-        System.out.println(cv.sum());
+//        System.out.println(cv.sum());
     }
 }
